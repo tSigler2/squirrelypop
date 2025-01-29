@@ -7,8 +7,11 @@ from lib.sprite.animated_sprite import *
 
 from typing import Tuple
 
+
 class Squirrel:
-    def __init__(self, game, path: str, health: int, damage: int, animation_time: int, *args: str) -> None:
+    def __init__(
+        self, game, path: str, health: int, damage: int, animation_time: int, *args: str
+    ) -> None:
         self.game = game
         self.anim_dict = build_animation_dictionary(path, *args)
         self.health = health
@@ -38,3 +41,10 @@ class Squirrel:
                 coords = (square, 0)
             else:
                 coords = (10, square)
+        self.x, self.y = coords
+
+    def bfs(self):
+        pass
+
+    def update(self):
+        pass

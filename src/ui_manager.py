@@ -10,6 +10,29 @@ from lib.menu.button import Button
 from lib.sprite.static_sprite import StaticSprite
 from lib.screen.background import Background
 from typing import Tuple
+import random as r
+from queue import Queue
+
+name_list = [
+    "Jean-Alexei Hernandez",
+    "David Jones",
+    "Sagar Patel",
+    "Thomas Sigler",
+    "Jake Hitchcock",
+    "Stephen Schaad",
+    "Nneka Otuonye",
+    "Alireza Asni-Ashari",
+    "Sohum Honavar",
+    "Thomas Vu",
+    "Laura Baptie",
+    "Ella Ortega",
+    "Sam Soard",
+    "Carome Taylor",
+    "Kilee Turner",
+    "Howard Wood",
+]
+
+NAME_MAX_LENGTH = 300
 
 
 class UIManager:
@@ -20,6 +43,8 @@ class UIManager:
         font_path = pg.font.match_font("arial")
         self.font = pg.font.Font(font_path, 72)
         self.font_color = (255, 255, 255)
+        self.name_queue = Queue()
+        self.name_list = []
 
         self.life_list = [
             LifeSprite(
@@ -55,7 +80,9 @@ class UIManager:
         self.banner.sprite = pg.transform.scale(self.banner.sprite, (480, 320))
         self.background = Background("assets/ui/background.png", (0, 0, 1280, 720))
 
-        self.bubbles = [Bubble("assets/ui/bubble.png", (0, 0)) for k in range(7)]
+        self.bubbles = [
+            Bubble(self.game, "assets/ui/bubble", "std", "pop") for k in range(7)
+        ]
 
         self.board = StaticSprite("assets/ui/SandGrid.png", (640, 100))
         self.board.sprite = pg.transform.scale(self.board.sprite, (600, 600))
@@ -77,6 +104,8 @@ class UIManager:
             self.coral_button.x, self.coral_button.y, 300, 150
         )
 
+        self.name_list = []
+
     def update(self):
         self.game.screen.screen.blit(
             self.background.background, (self.background.x, self.background.y)
@@ -84,11 +113,10 @@ class UIManager:
 
         mouse_pos = pg.mouse.get_pos()
         for bubble in self.bubbles:
-            bubble.move()
-            self.game.screen.screen.blit(bubble.sprite, (bubble.x, bubble.y))
+            bubble.update()
 
         if self.game.mode == "start_menu":
-
+            name_death = []
             self.start.sprite.set_alpha(255)
             self.settings.sprite.set_alpha(255)
             self.quit.sprite.set_alpha(255)
@@ -100,6 +128,42 @@ class UIManager:
             if self.quit.check_press(mouse_pos):
                 self.quit.sprite.set_alpha(200)
 
+            if not self.name_queue.empty():
+                count = self.name_queue.qsize()
+                for k in range(count):
+                    self.name_list.append(
+                        [
+                            self.font.render(
+                                name_list[r.randint(0, len(name_list) - 1)],
+                                True,
+                                self.font_color,
+                            ),
+                            self.name_queue.get(),
+                            300,
+                        ]
+                    )
+                    self.name_list[-1][0] = pg.transform.scale(
+                        self.name_list[-1][0],
+                        (
+                            int(self.name_list[-1][0].get_width() * 0.50),
+                            int(self.name_list[-1][0].get_height() * 0.50),
+                        ),
+                    )
+
+            death_list = []
+
+            for k, name in enumerate(self.name_list):
+                if name[2] == 0:
+                    death_list.append(k)
+
+                self.game.screen.screen.blit(name[0], name[1])
+                name[2] -= 1
+
+                name[0].set_alpha(((name[2] / NAME_MAX_LENGTH) * 255))
+
+            for i in death_list:
+                self.name_list.pop(i)
+
             self.game.screen.screen.blit(
                 self.start.sprite, (self.start.x, self.start.y)
             )
@@ -110,6 +174,7 @@ class UIManager:
             self.game.screen.screen.blit(
                 self.banner.sprite, (self.banner.x, self.banner.y)
             )
+
         elif self.game.mode == "settings":
             pass
         elif self.game.mode == "game":

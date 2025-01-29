@@ -11,8 +11,22 @@ class CoralManager:
 
     def add_coral(self, coords: Tuple[int, int]) -> None:
         self.coral_list.append(
-            Coral(self.game, "assets/coral", coords, 5, 1, 120, "std")
+            Coral(
+                self.game,
+                "assets/coral",
+                (
+                    self.game.map[coords[0]][coords[1]].x,
+                    self.game.map[coords[0]][coords[1]].y,
+                ),
+                5,
+                1,
+                120,
+                "std",
+            )
         )
+
+        self.game.map[coords[0]][coords[1]].occupied = True
+        self.game.map[coords[0]][coords[1]].occupant = self
 
     def update(self) -> None:
         destroy_list = []
@@ -22,6 +36,7 @@ class CoralManager:
                 destroy_list.append(i)
 
         for i in destroy_list:
+            self.game.map[self.coral_list[i].x][self.coral_list[i].y].occupied = False
             self.coral_list.pop(i)
 
     def check_collision(self, rect: pg.Rect) -> bool:

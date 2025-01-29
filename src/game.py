@@ -28,10 +28,12 @@ class Game:
             self, "assets/house", (910, 360), 10, 2400, 120, "std", "death"
         )
         self.map = gen_map()
+        self.map[6][6].occupant = self.house
         self.coral_manager = CoralManager(self)
 
         self.mode = "start_menu"
         self.coral_toggle = False
+        self.mouse_up = True
 
         self.money = 0
 
@@ -62,19 +64,29 @@ class Game:
                     print("Can Place Coral")
             if mouse_cool_down > 0:
                 mouse_cool_down -= 1
-            if pg.mouse.get_pressed()[0]:
+            if pg.mouse.get_pressed()[0] and self.mouse_up:
+                self.mouse_up = False
                 self.ui_manager.check_events()
                 if self.coral_toggle and mouse_cool_down == 0:
                     for row in self.map:
                         for space in row:
                             if space.check_collision(pg.mouse.get_pos()):
-                                self.coral_manager.add_coral((space.x, space.y))
+                                self.coral_manager.add_coral(space.position)
                                 self.coral_toggle = False
                                 break
                         if not self.coral_toggle:
                             break
                     self.coral_toggle = False
                 print(self.coral_toggle)
+
+            if not pg.mouse.get_pressed()[0] and not self.mouse_up:
+                self.mouse_up = True
+
+                if self.mode == "start_menu":
+                    for bubble in self.ui_manager.bubbles:
+                        if bubble.check_collision(pg.mouse.get_pos()):
+                            self.ui_manager.name_queue.put((bubble.x, bubble.y))
+                            bubble.selected_path = "pop"
 
             self.ui_manager.update()
             if self.mode == "game":
