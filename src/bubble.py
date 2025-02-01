@@ -62,10 +62,12 @@ class Bubble:
             self.anim_dict[self.selected_path][0], (self.x, self.y)
         )
 
-        if self.selected_path == "pop" and self.pop_count == len(
-            self.anim_dict[self.selected_path]
+        if (
+            self.selected_path == "pop"
+            and self.pop_count == len(self.anim_dict[self.selected_path]) - 1
         ):
             self.pop_count = 0
+            self.anim_dict[self.selected_path].rotate(-1)
             self.selected_path = "std"
             self.set_pos()
 

@@ -31,8 +31,7 @@ class LifeSprite(StaticSprite):
         self.delta_change = delta_change
         self.last_time = pg.time.get_ticks()
 
-        self.stage = r.randint(0, self.intervals)
-        self.y = int(self.stage * self.intervals + self.bounds[0])
+        self.y = int(r.randint(0, self.intervals) * self.intervals + self.bounds[0])
 
         if r.random() >= 0.5:
             self.dir = True
@@ -41,18 +40,16 @@ class LifeSprite(StaticSprite):
         self.w, self.h = self.sprite.get_width(), self.sprite.get_height()
 
     def float_change(self) -> None:
-        if r.random() >= 0.5 and self.delta_change > 20:
+        if r.random() > 0.8 and self.delta_change > 20:
             self.delta_change -= 1
-        elif r.random() < 0.5 and self.delta_change < 60:
+        elif r.random() < 0.2 and self.delta_change < 60:
             self.delta_change += 1
         if self.y >= self.bounds[1] or self.y <= self.bounds[0]:
             self.dir = not self.dir
 
         if self.dir:
-            self.stage += 1
             self.y += int(self.intervals)
             return
-        self.stage -= 1
         self.y -= int(self.intervals)
 
     def update(self) -> None:

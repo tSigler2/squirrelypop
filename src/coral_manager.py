@@ -26,7 +26,7 @@ class CoralManager:
         )
 
         self.game.map[coords[0]][coords[1]].occupied = True
-        self.game.map[coords[0]][coords[1]].occupant = self
+        self.game.map[coords[0]][coords[1]].occupant = self.coral_list[-1]
 
     def update(self) -> None:
         destroy_list = []

@@ -11,6 +11,7 @@ from lib.util.sound import SoundManager
 from player import Player
 from house import House
 from coral_manager import CoralManager
+from enemy_manager import SquirrelManager
 from square import *
 
 
@@ -30,6 +31,7 @@ class Game:
         self.map = gen_map()
         self.map[6][6].occupant = self.house
         self.coral_manager = CoralManager(self)
+        self.squirrel_manager = SquirrelManager(self, 900, 5000)
 
         self.mode = "start_menu"
         self.coral_toggle = False
@@ -39,8 +41,8 @@ class Game:
 
     def run(self) -> None:
         mouse_cool_down = 0
-        self.sound_manager.music("load", "assets/sounds/TownTheme.mp3")
-        self.sound_manager.music("play")
+        self.sound_manager.music("load", "assets/sounds/main_theme.mp3")
+        # self.sound_manager.music("play")
 
         self.sound_manager.add_sound(
             "FishDeath_7.wav",
@@ -50,6 +52,9 @@ class Game:
             path="assets/player/FishDeathSounds",
         )
 
+        self.sound_manager.add_sound("bubble_pop.mp3", path="assets/sounds")
+
+        start_enemy_spawn = True
         while True:
             for e in pg.event.get():
                 self.screen.events(e)
@@ -61,7 +66,6 @@ class Game:
                 elif e.type == pg.USEREVENT + 24:
                     self.coral_toggle = True
                     mouse_cool_down = 3
-                    print("Can Place Coral")
             if mouse_cool_down > 0:
                 mouse_cool_down -= 1
             if pg.mouse.get_pressed()[0] and self.mouse_up:
@@ -77,7 +81,6 @@ class Game:
                         if not self.coral_toggle:
                             break
                     self.coral_toggle = False
-                print(self.coral_toggle)
 
             if not pg.mouse.get_pressed()[0] and not self.mouse_up:
                 self.mouse_up = True
@@ -87,12 +90,17 @@ class Game:
                         if bubble.check_collision(pg.mouse.get_pos()):
                             self.ui_manager.name_queue.put((bubble.x, bubble.y))
                             bubble.selected_path = "pop"
+                            self.sound_manager.play_sound("bubble_pop")
 
             self.ui_manager.update()
             if self.mode == "game":
+                if start_enemy_spawn:
+                    start_enemy_spawn = False
+                    self.squirrel_manager.start_tick = pg.time.get_ticks()
                 self.player.update()
                 self.house.update()
                 self.coral_manager.update()
+                self.squirrel_manager.update()
             pg.display.flip()
             self.clock.tick(60)
 
