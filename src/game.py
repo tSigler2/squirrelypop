@@ -29,7 +29,14 @@ class Game:
             self, "assets/house", (910, 360), 10, 2400, 120, "std", "death"
         )
         self.map = gen_map()
-        self.map[6][6].occupant = self.house
+        self.map[5][5].occupant = self.house
+        self.map[5][5].occupied = True
+
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                print(self.map[i][j].occupied, end=" ")
+            print("\n", end="")
+
         self.coral_manager = CoralManager(self)
         self.squirrel_manager = SquirrelManager(self, 900, 5000)
 

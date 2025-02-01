@@ -16,6 +16,7 @@ class Coral:
         health: int,
         damage: int,
         animation_time: int,
+        grid_position: Tuple[int, int],
         *args: str
     ) -> None:
         self.game = game
@@ -27,7 +28,7 @@ class Coral:
         self.animation_time = animation_time
         self.prev_anim_time = pg.time.get_ticks()
         self.selected_path = "std"
-
+        self.coords = grid_position
         self.x, self.y = coords
         self.w, self.h = (
             self.anim_dict[self.selected_path][0].get_width(),

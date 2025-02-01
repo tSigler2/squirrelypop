@@ -8,10 +8,19 @@ from lib.sprite.animated_sprite import *
 from typing import Tuple, List
 from collections import deque
 
+MOVE_DELTA_MAX = 60
+
 
 class Squirrel:
     def __init__(
-        self, game, path: str, health: int, damage: int, animation_time: int, *args: str
+        self,
+        game,
+        path: str,
+        health: int,
+        damage: int,
+        animation_time: int,
+        move_time: int,
+        *args: str
     ) -> None:
         self.game = game
         self.anim_dict = build_animation_dictionary(path, *args)
@@ -20,6 +29,11 @@ class Squirrel:
         self.animation_time = animation_time
         self.prev_anim_time = pg.time.get_ticks()
         self.selected_path = "walk"
+        self.move_time = move_time
+        self.move_delta = 0
+        self.prev_move_time = pg.time.get_ticks()
+        self.attack_frames = 0
+        self.sprite = self.anim_dict[self.selected_path][0]
 
         if r.random() >= 0.5:
             columns = True
@@ -51,7 +65,6 @@ class Squirrel:
         )
 
         self.path = self.bfs()
-        print(self.path)
 
     def bfs(self) -> List[Tuple[int, int]]:
         q = deque([((self.position[0], self.position[1]), [])])
@@ -79,14 +92,43 @@ class Squirrel:
                     and ny < 11
                     and (nx, ny) not in visited
                 ):
+                    if type(self.game.map[nx][ny].occupant) is Squirrel:
+                        continue
                     visited.add((nx, ny))
                     q.append(((nx, ny), path + [(nx, ny)]))
-        return None
+        return []
 
     def move(self):
-        pass
+        self.x, self.y = pg.math.lerp(
+            self.x,
+            self.game.map[self.path[0][0]][self.path[0][1]].x,
+            self.move_delta / MOVE_DELTA_MAX,
+        ), pg.math.lerp(
+            self.y,
+            self.game.map[self.path[0][0]][self.path[0][1]].y,
+            self.move_delta / MOVE_DELTA_MAX,
+        )
+        self.move_delta += 1
+
+        if self.move_delta == MOVE_DELTA_MAX:
+            self.move_delta = 0
+            self.prev_move_time = pg.time.get_ticks()
+            self.game.map[self.position[0]][self.position[1]].occupant = None
+            self.game.map[self.position[0]][self.position[1]].occupied = False
+
+            self.position = self.path.pop(0)
+            self.game.map[self.position[0]][self.position[1]].occupant = self
+            self.game.map[self.position[0]][self.position[1]].occupied = True
+
+    def attack(self, coords: Tuple[int, int]) -> None:
+        self.game.map[coords[0]][coords[1]].occupant.health -= 1
+        if self.game.map[coords[0]][coords[1]].occupant.health >= 0:
+            self.selected_path = "walk"
+        self.attack_frames = 0
 
     def update(self) -> None:
+        if self.path == []:
+            self.path = self.bfs()
         if check_animation_time(self.animation_time, self.prev_anim_time):
             self.prev_animation_time = pg.time.get_ticks()
             animate(
@@ -95,7 +137,25 @@ class Squirrel:
                 self.game.screen.screen,
                 (self.x, self.y),
             )
+            self.sprite = self.anim_dict[self.selected_path][0]
 
-        self.game.screen.screen.blit(
-            self.anim_dict[self.selected_path][0], (self.x, self.y)
-        )
+            if self.selected_path == "attack":
+                self.attack_frames += 1
+
+        curr_tick = pg.time.get_ticks()
+        if self.path == []:
+            self.game.screen.screen.blit(self.sprite, (self.x, self.y))
+
+        if (curr_tick - self.prev_move_time) >= self.move_time and not self.game.map[
+            self.path[0][0]
+        ][self.path[0][1]].occupied:
+            self.move()
+        elif self.game.map[self.path[0][0]][self.path[0][1]].occupied:
+            self.selected_path = "attack"
+
+        if self.selected_path == "attack" and self.attack_frames == 13:
+            self.attack((self.path[0][0], self.path[0][1]))
+
+            if self.path[0][0] < self.position[0]:
+                pg.transform.flip(self.sprite, True, False)
+        self.game.screen.screen.blit(self.sprite, (self.x, self.y))

@@ -32,6 +32,5 @@ def gen_map() -> List[Space]:
         ]
         for i in range(11)
     ]
-    map[6][6].occupied = True
 
     return map

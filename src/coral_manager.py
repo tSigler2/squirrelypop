@@ -21,6 +21,7 @@ class CoralManager:
                 5,
                 1,
                 120,
+                coords,
                 "std",
             )
         )
@@ -36,7 +37,9 @@ class CoralManager:
                 destroy_list.append(i)
 
         for i in destroy_list:
-            self.game.map[self.coral_list[i].x][self.coral_list[i].y].occupied = False
+            self.game.map[self.coral_list[i].coords[0]][
+                self.coral_list[i].coords[1]
+            ].occupied = False
             self.coral_list.pop(i)
 
     def check_collision(self, rect: pg.Rect) -> bool:
