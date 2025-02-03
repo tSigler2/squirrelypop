@@ -17,6 +17,7 @@ class Bubble:
         self.selected_path = "std"
         self.prev_animation_time = pg.time.get_ticks()
         self.pop_count = 0
+        self.poppable = True
 
         self.rect = pg.Rect(
             (
@@ -72,3 +73,4 @@ class Bubble:
             self.set_pos()
 
             self.game.ui_manager.name_queue.put((self.x, self.y))
+            self.poppable = True

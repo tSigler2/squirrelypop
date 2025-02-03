@@ -90,10 +90,14 @@ class Game:
 
                 if self.mode == "start_menu":
                     for bubble in self.ui_manager.bubbles:
-                        if bubble.check_collision(pg.mouse.get_pos()):
+                        if (
+                            bubble.check_collision(pg.mouse.get_pos())
+                            and bubble.poppable
+                        ):
                             self.ui_manager.name_queue.put((bubble.x, bubble.y))
                             bubble.selected_path = "pop"
                             self.sound_manager.play_sound("bubble_pop")
+                            bubble.poppable = False
 
             self.ui_manager.update()
             if self.mode == "game":
