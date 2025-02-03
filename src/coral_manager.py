@@ -40,7 +40,11 @@ class CoralManager:
             self.game.map[self.coral_list[i].coords[0]][
                 self.coral_list[i].coords[1]
             ].occupied = False
+            self.game.map[self.coral_list[i].coords[0]][
+                self.coral_list[i].coords[1]
+            ].occupant = None
+
             self.coral_list.pop(i)
 
-    def check_collision(self, rect: pg.Rect) -> bool:
+    def check_collision(self, rect: pg.Rect) -> int:
         return rect.collidelist([coral.rect for coral in self.coral_list])

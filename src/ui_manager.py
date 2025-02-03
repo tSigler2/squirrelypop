@@ -66,6 +66,20 @@ class UIManager:
             ),
         ]
 
+        self.volume_list = [
+            [
+                pg.Surface((20, int(pg.math.lerp(20, 100, i / 10)))),
+                (
+                    int(pg.math.lerp(400, 800, i / 10)),
+                    int(200 - pg.math.lerp(20, 100, i / 10)),
+                ),
+            ]
+            for i in range(1, 11)
+        ]
+
+        for surface in self.volume_list:
+            surface[0].fill("green")
+
         self.start = Button(
             "assets/ui/buttons/StartButton.png", (540, 380), event=pg.USEREVENT + 22
         )
@@ -105,7 +119,7 @@ class UIManager:
 
         self.name_list = []
 
-    def update(self):
+    def update(self) -> None:
         self.game.screen.screen.blit(
             self.background.background, (self.background.x, self.background.y)
         )
@@ -175,7 +189,14 @@ class UIManager:
             )
 
         elif self.game.mode == "settings":
-            pass
+            vol_surface = self.font.render("Volume", True, self.font_color)
+
+            self.game.screen.screen.blit(vol_surface, (520, 20))
+
+            for i in range(len(self.volume_list)):
+                self.game.screen.screen.blit(
+                    self.volume_list[i][0], self.volume_list[i][1]
+                )
         elif self.game.mode == "game":
             self.game.screen.screen.blit(
                 self.board.sprite, (self.board.x, self.board.y)
@@ -213,6 +234,35 @@ class UIManager:
                 self.start.activate_event()
             if self.settings.check_press(mouse_pos):
                 self.settings.activate_event()
+
+        elif self.game.mode == "settings" and pg.mouse.get_pressed()[0]:
+            vol_num = 10
+            change_vol = False
+            for idx, i in enumerate(self.volume_list):
+                if (
+                    i[0]
+                    .get_rect(
+                        center=(
+                            int(i[1][0] + i[0].get_width() / 2),
+                            int(i[1][1] + i[0].get_height() / 2),
+                        )
+                    )
+                    .collidepoint(mouse_pos)
+                ):
+                    vol_num = idx
+                    change_vol = True
+                    break
+            if change_vol:
+                for k in range(len(self.volume_list)):
+                    if k <= vol_num:
+                        self.volume_list[k][0].fill("green")
+                    else:
+                        self.volume_list[k][0].fill("red")
+
+                pg.mixer.music.set_volume(vol_num / 10)
+
+                if vol_num == 1:
+                    pg.mixer.music.set_volume(0.0)
 
         elif self.game.mode == "game":
             if self.coral_button.check_press(mouse_pos) and not self.game.coral_toggle:

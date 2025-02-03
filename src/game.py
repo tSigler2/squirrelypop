@@ -31,12 +31,6 @@ class Game:
         self.map = gen_map()
         self.map[5][5].occupant = self.house
         self.map[5][5].occupied = True
-
-        for i in range(len(self.map)):
-            for j in range(len(self.map[i])):
-                print(self.map[i][j].occupied, end=" ")
-            print("\n", end="")
-
         self.coral_manager = CoralManager(self)
         self.squirrel_manager = SquirrelManager(self, 900, 5000)
 
@@ -49,7 +43,7 @@ class Game:
     def run(self) -> None:
         mouse_cool_down = 0
         self.sound_manager.music("load", "assets/sounds/main_theme.mp3")
-        # self.sound_manager.music("play")
+        self.sound_manager.music("play")
 
         self.sound_manager.add_sound(
             "FishDeath_7.wav",
@@ -81,7 +75,9 @@ class Game:
                 if self.coral_toggle and mouse_cool_down == 0:
                     for row in self.map:
                         for space in row:
-                            if space.check_collision(pg.mouse.get_pos()):
+                            if space.check_collision(
+                                pg.mouse.get_pos()
+                            ) and self.player.check_coral_valid(pg.mouse.get_pos()):
                                 self.coral_manager.add_coral(space.position)
                                 self.coral_toggle = False
                                 break

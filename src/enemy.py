@@ -34,6 +34,7 @@ class Squirrel:
         self.prev_move_time = pg.time.get_ticks()
         self.attack_frames = 0
         self.sprite = self.anim_dict[self.selected_path][0]
+        self.w, self.h = self.sprite.get_width(), self.sprite.get_height()
 
         if r.random() >= 0.5:
             columns = True
@@ -65,6 +66,7 @@ class Squirrel:
         )
 
         self.path = self.bfs()
+        self.rect = pg.Rect((self.x, self.y, self.w, self.h))
 
     def bfs(self) -> List[Tuple[int, int]]:
         q = deque([((self.position[0], self.position[1]), [])])
@@ -121,7 +123,8 @@ class Squirrel:
             self.game.map[self.position[0]][self.position[1]].occupied = True
 
     def attack(self, coords: Tuple[int, int]) -> None:
-        self.game.map[coords[0]][coords[1]].occupant.health -= 1
+        if self.game.map[coords[0]][coords[1]].occupied:
+            self.game.map[coords[0]][coords[1]].occupant.health -= 1
         if self.game.map[coords[0]][coords[1]].occupant.health >= 0:
             self.selected_path = "walk"
         self.attack_frames = 0
@@ -129,6 +132,8 @@ class Squirrel:
     def update(self) -> None:
         if self.path == []:
             self.path = self.bfs()
+            if self.path == []:
+                return
         if check_animation_time(self.animation_time, self.prev_anim_time):
             self.prev_animation_time = pg.time.get_ticks()
             animate(
@@ -143,8 +148,16 @@ class Squirrel:
                 self.attack_frames += 1
 
         curr_tick = pg.time.get_ticks()
-        if self.path == []:
-            self.game.screen.screen.blit(self.sprite, (self.x, self.y))
+        check_flip = False
+        if self.position[0] > 0:
+            if self.path[0][0] < self.position[0]:
+                self.sprite = pg.transform.flip(self.sprite, True, False)
+                if self.selected_path == "attack":
+                    self.game.screen.screen.blit(self.sprite, (self.x - self.w, self.y))
+                elif self.selected_path == "walk":
+                    self.game.screen.screen.blit(self.sprite, (self.x, self.y))
+
+                check_flip = True
 
         if (curr_tick - self.prev_move_time) >= self.move_time and not self.game.map[
             self.path[0][0]
@@ -155,7 +168,7 @@ class Squirrel:
 
         if self.selected_path == "attack" and self.attack_frames == 13:
             self.attack((self.path[0][0], self.path[0][1]))
+        if not check_flip:
+            self.game.screen.screen.blit(self.sprite, (self.x, self.y))
 
-            if self.path[0][0] < self.position[0]:
-                pg.transform.flip(self.sprite, True, False)
-        self.game.screen.screen.blit(self.sprite, (self.x, self.y))
+        self.rect.x, self.rect.y = self.x, self.y

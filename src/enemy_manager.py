@@ -40,6 +40,9 @@ class SquirrelManager:
 
         self.spawn_limit = self.start_rate / (1 + m.log10(curr_tick / self.eval_rate))
 
+    def check_collision(self, rect: pg.Rect) -> int:
+        return rect.collidelist([enemy.rect for enemy in self.squirrel_list])
+
     def update(self) -> None:
         self.spawn_tick += 1
         self.check_spawn()
