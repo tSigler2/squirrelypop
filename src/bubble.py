@@ -2,7 +2,7 @@ import pygame as pg
 import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from lib.sprite.animated_sprite import *
+from lib.menu.sprite.animated_sprite import *
 
 import random as r
 from typing import Tuple

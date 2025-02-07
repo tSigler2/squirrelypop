@@ -7,7 +7,7 @@ from bubble import Bubble
 from life_sprite import LifeSprite
 
 from lib.menu.button import Button
-from lib.sprite.static_sprite import StaticSprite
+from lib.menu.sprite.static_sprite import StaticSprite
 from lib.screen.background import Background
 from typing import Tuple
 import random as r
@@ -89,6 +89,11 @@ class UIManager:
         self.quit = Button(
             "assets/ui/buttons/QuitButton.png", (522, 500), event=pg.QUIT
         )
+
+        self.options_leave = Button(
+            "assets/ui/buttons/exit_options.png", (520, 600), event=pg.USEREVENT + 27
+        )
+
         self.banner = StaticSprite("assets/ui/logo.png", (400, 20))
         self.banner.sprite = pg.transform.scale(self.banner.sprite, (480, 320))
         self.background = Background("assets/ui/background.png", (0, 0, 1280, 720))
@@ -197,6 +202,9 @@ class UIManager:
                 self.game.screen.screen.blit(
                     self.volume_list[i][0], self.volume_list[i][1]
                 )
+            self.game.screen.screen.blit(
+                self.options_leave.sprite, (self.options_leave.x, self.options_leave.y)
+            )
         elif self.game.mode == "game":
             self.game.screen.screen.blit(
                 self.board.sprite, (self.board.x, self.board.y)
@@ -263,6 +271,8 @@ class UIManager:
 
                 if vol_num == 1:
                     pg.mixer.music.set_volume(0.0)
+            if self.options_leave.check_press(mouse_pos):
+                self.options_leave.activate_event()
 
         elif self.game.mode == "game":
             if self.coral_button.check_press(mouse_pos) and not self.game.coral_toggle:

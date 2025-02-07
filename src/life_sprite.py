@@ -4,7 +4,7 @@ import random as r
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from lib.sprite.static_sprite import StaticSprite
+from lib.menu.sprite.static_sprite import StaticSprite
 
 from typing import Tuple
 

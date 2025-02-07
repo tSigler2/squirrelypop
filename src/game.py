@@ -12,6 +12,7 @@ from player import Player
 from house import House
 from coral_manager import CoralManager
 from enemy_manager import SquirrelManager
+from enemy import Squirrel
 from square import *
 
 
@@ -39,6 +40,8 @@ class Game:
         self.mouse_up = True
 
         self.money = 0
+        self.run_game = True
+        self.bite_prep = False
 
     def run(self) -> None:
         mouse_cool_down = 0
@@ -56,7 +59,8 @@ class Game:
         self.sound_manager.add_sound("bubble_pop.mp3", path="assets/sounds")
 
         start_enemy_spawn = True
-        while True:
+        while self.run_game:
+            keys = pg.key.get_pressed()
             for e in pg.event.get():
                 self.screen.events(e)
 
@@ -67,6 +71,8 @@ class Game:
                 elif e.type == pg.USEREVENT + 24:
                     self.coral_toggle = True
                     mouse_cool_down = 3
+                elif e.type == pg.USEREVENT + 27:
+                    self.mode = "start_menu"
             if mouse_cool_down > 0:
                 mouse_cool_down -= 1
             if pg.mouse.get_pressed()[0] and self.mouse_up:
@@ -75,15 +81,31 @@ class Game:
                 if self.coral_toggle and mouse_cool_down == 0:
                     for row in self.map:
                         for space in row:
-                            if space.check_collision(
-                                pg.mouse.get_pos()
-                            ) and self.player.check_coral_valid(pg.mouse.get_pos()):
+                            if (
+                                space.check_collision(pg.mouse.get_pos())
+                                and self.player.check_coral_valid(pg.mouse.get_pos())
+                                and self.money >= 5
+                            ):
                                 self.coral_manager.add_coral(space.position)
                                 self.coral_toggle = False
                                 break
                         if not self.coral_toggle:
                             break
                     self.coral_toggle = False
+                if self.bite_prep and self.player.attack_count == -1:
+                    self.player.selected_path = "attack"
+                    self.player.attack_count = 6
+                if self.bite_prep and self.player.attack_count == 0:
+                    self.player.attack_count = -1
+                    self.bite_prep = False
+
+                    for row in self.map:
+                        for space in row:
+                            if space.check_collision(
+                                pg.mouse.get_pos()
+                            ) and self.player.check_coral_valid(pg.mouse.get_pos()):
+                                if type(space.occupant) == Squirrel:
+                                    space.occupant.health -= 1
 
             if not pg.mouse.get_pressed()[0] and not self.mouse_up:
                 self.mouse_up = True
@@ -98,6 +120,8 @@ class Game:
                             bubble.selected_path = "pop"
                             self.sound_manager.play_sound("bubble_pop")
                             bubble.poppable = False
+            if keys[pg.K_j] and not self.bite_prep:
+                self.bite_prep = True
 
             self.ui_manager.update()
             if self.mode == "game":
@@ -105,6 +129,8 @@ class Game:
                     start_enemy_spawn = False
                     self.squirrel_manager.start_tick = pg.time.get_ticks()
                 self.player.update()
+                if self.bite_prep and not self.player.dead:
+                    self.player.draw_valid_boxes()
                 self.house.update()
                 self.coral_manager.update()
                 self.squirrel_manager.update()

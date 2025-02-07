@@ -4,8 +4,8 @@ import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from sprite.static_sprite import StaticSprite
-from sprite.animated_sprite import DrawableScreen
+from .sprite.static_sprite import StaticSprite
+from .sprite.animated_sprite import DrawableScreen
 
 
 class Button(StaticSprite):

@@ -6,7 +6,7 @@ import math as m
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from lib.sprite.animated_sprite import *
+from lib.menu.sprite.animated_sprite import *
 
 
 class Player:
@@ -46,6 +46,7 @@ class Player:
         )
 
         self.position = (0, 0)
+        self.attack_count = -1
 
     def input(self) -> None:
         keys = pg.key.get_pressed()
@@ -87,9 +88,6 @@ class Player:
         else:
             self.x, self.y = dx, dy
 
-        if keys[pg.K_j]:
-            self.health = 0
-
     def update_health(self, val: int) -> None:
         self.health += val
 
@@ -120,6 +118,27 @@ class Player:
             return False
         return True
 
+    def draw_valid_boxes(self) -> None:
+        for i in range(self.position[0] - 1, self.position[0] + 2):
+            for j in range(self.position[1] - 1, self.position[1] + 2):
+                if (
+                    (i == self.position[0] and j == self.position[1])
+                    or i <= -1
+                    or j <= -1
+                    or i >= 11
+                    or j >= 11
+                    or self.game.map[i][j].occupied
+                ):
+                    continue
+
+                s = pg.Surface((self.game.map[i][j].w, self.game.map[i][j].h))
+                s.fill("green")
+                s.set_alpha(150)
+
+                self.game.screen.screen.blit(
+                    s, (self.game.map[i][j].x, self.game.map[i][j].y)
+                )
+
     def update(self) -> None:
         if self.dead:
             self.death_timer -= 1
@@ -135,6 +154,10 @@ class Player:
                 self.game.screen.screen,
                 (self.x, self.y),
             )
+
+            if self.selected_path == "attack":
+                self.attack_count -= 1
+
         if self.death_flash % 5 != 0 or self.death_flash == 0:
             self.sprite = self.anim_dict[self.selected_path][0]
 
@@ -159,28 +182,13 @@ class Player:
         self.game.map[self.position[0]][self.position[1]].occupant = self
 
         if self.game.coral_toggle and not self.dead:
-            for i in range(self.position[0] - 1, self.position[0] + 2):
-                for j in range(self.position[1] - 1, self.position[1] + 2):
-                    if (
-                        (i == self.position[0] and j == self.position[1])
-                        or i <= -1
-                        or j <= -1
-                        or i >= 11
-                        or j >= 11
-                        or self.game.map[i][j].occupied
-                    ):
-                        continue
-
-                    s = pg.Surface((self.game.map[i][j].w, self.game.map[i][j].h))
-                    s.fill("green")
-                    s.set_alpha(150)
-
-                    self.game.screen.screen.blit(
-                        s, (self.game.map[i][j].x, self.game.map[i][j].y)
-                    )
+            self.draw_valid_boxes()
 
         if self.death_flash > 0:
             self.death_flash -= 1
         if self.health <= 0:
             self.health = 10
             self.death()
+
+        if self.attack_count == 0:
+            self.selected_path = "walk"
