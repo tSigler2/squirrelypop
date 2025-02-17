@@ -24,10 +24,10 @@ class Game:
         self.ui_manager = UIManager(self)
         self.sound_manager = SoundManager()
         self.player = Player(
-            self, "assets/player", (1000, 400), 10, 2, 120, "walk", "attack"
+            self, "squirrelypop/assets/player", (1000, 400), 10, 2, 120, "walk", "attack"
         )
         self.house = House(
-            self, "assets/house", (910, 360), 10, 2400, 120, "std", "death"
+            self, "squirrelypop/assets/house", (910, 360), 10, 2400, 120, "std", "death"
         )
         self.map = gen_map()
         self.map[5][5].occupant = self.house
@@ -45,7 +45,7 @@ class Game:
 
     def run(self) -> None:
         mouse_cool_down = 0
-        self.sound_manager.music("load", "assets/sounds/main_theme.mp3")
+        self.sound_manager.music("load", "squirrelypop/assets/sounds/main_theme.mp3")
         self.sound_manager.music("play")
 
         self.sound_manager.add_sound(
@@ -53,10 +53,10 @@ class Game:
             "FishDeath_11.wav",
             "FishDeath_15.wav",
             "FishDeath_22.wav",
-            path="assets/player/FishDeathSounds",
+            path="squirrelypop/assets/player/FishDeathSounds",
         )
 
-        self.sound_manager.add_sound("bubble_pop.mp3", path="assets/sounds")
+        self.sound_manager.add_sound("bubble_pop.mp3", path="squirrelypop/assets/sounds")
 
         start_enemy_spawn = True
         while self.run_game:

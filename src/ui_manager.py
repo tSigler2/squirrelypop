@@ -40,29 +40,29 @@ class UIManager:
         pg.font.init()
         self.game = game
 
-        self.font = pg.font.Font("assets/ui/font.ttf", 72)
+        self.font = pg.font.Font("squirrelypop/assets/ui/font.ttf", 72)
         self.font_color = (255, 255, 255)
         self.name_queue = Queue()
         self.name_list = []
 
         self.life_list = [
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (80, 0), (140, 180), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (80, 0), (140, 180), 20, 60
             ),
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (80, 0), (290, 330), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (80, 0), (290, 330), 20, 60
             ),
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (80, 0), (450, 490), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (80, 0), (450, 490), 20, 60
             ),
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (500, 0), (140, 180), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (500, 0), (140, 180), 20, 60
             ),
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (500, 0), (290, 330), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (500, 0), (290, 330), 20, 60
             ),
             LifeSprite(
-                self.game, "assets/ui/SharkLife.png", (500, 0), (450, 490), 20, 60
+                self.game, "squirrelypop/assets/ui/SharkLife.png", (500, 0), (450, 490), 20, 60
             ),
         ]
 
@@ -81,37 +81,37 @@ class UIManager:
             surface[0].fill("green")
 
         self.start = Button(
-            "assets/ui/buttons/StartButton.png", (540, 380), event=pg.USEREVENT + 22
+            "squirrelypop/assets/ui/buttons/StartButton.png", (540, 380), event=pg.USEREVENT + 22
         )
         self.settings = Button(
-            "assets/ui/buttons/SettingsButton.png", (567, 440), event=pg.USEREVENT + 23
+            "squirrelypop/assets/ui/buttons/SettingsButton.png", (567, 440), event=pg.USEREVENT + 23
         )
         self.quit = Button(
-            "assets/ui/buttons/QuitButton.png", (522, 500), event=pg.QUIT
+            "squirrelypop/assets/ui/buttons/QuitButton.png", (522, 500), event=pg.QUIT
         )
 
         self.options_leave = Button(
-            "assets/ui/buttons/exit_options.png", (520, 600), event=pg.USEREVENT + 27
+            "squirrelypop/assets/ui/buttons/exit_options.png", (520, 600), event=pg.USEREVENT + 27
         )
 
-        self.banner = StaticSprite("assets/ui/logo.png", (400, 20))
+        self.banner = StaticSprite("squirrelypop/assets/ui/logo.png", (400, 20))
         self.banner.sprite = pg.transform.scale(self.banner.sprite, (480, 320))
-        self.background = Background("assets/ui/background.png", (0, 0, 1280, 720))
+        self.background = Background("squirrelypop/assets/ui/background.png", (0, 0, 1280, 720))
 
         self.bubbles = [
-            Bubble(self.game, "assets/ui/bubble", "std", "pop") for k in range(7)
+            Bubble(self.game, "squirrelypop/assets/ui/bubble", "std", "pop") for k in range(7)
         ]
 
-        self.board = StaticSprite("assets/ui/SandGrid.png", (640, 100))
+        self.board = StaticSprite("squirrelypop/assets/ui/SandGrid.png", (640, 100))
         self.board.sprite = pg.transform.scale(self.board.sprite, (600, 600))
 
-        self.num_display = StaticSprite("assets/ui/FE_Health_Counter.png", (200, 0))
+        self.num_display = StaticSprite("squirrelypop/assets/ui/FE_Health_Counter.png", (200, 0))
         self.num_display.sprite = pg.transform.scale(
             self.num_display.sprite, (300, 600)
         )
 
         self.coral_button = Button(
-            "assets/ui/buttons/PlaceCoralButton.png",
+            "squirrelypop/assets/ui/buttons/PlaceCoralButton.png",
             (200, 230),
             event=pg.USEREVENT + 24,
         )

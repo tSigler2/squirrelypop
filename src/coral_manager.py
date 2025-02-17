@@ -13,7 +13,7 @@ class CoralManager:
         self.coral_list.append(
             Coral(
                 self.game,
-                "assets/coral",
+                "squirrelypop/assets/coral",
                 (
                     self.game.map[coords[0]][coords[1]].x,
                     self.game.map[coords[0]][coords[1]].y,

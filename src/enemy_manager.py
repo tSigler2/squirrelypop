@@ -21,7 +21,7 @@ class SquirrelManager:
 
     def spawn_squirrel(self) -> None:
         self.squirrel_list.append(
-            Squirrel(self.game, "assets/squirrel", 10, 1, 120, 300, "walk", "attack")
+            Squirrel(self.game, "squirrelypop/assets/squirrel", 10, 1, 120, 300, "walk", "attack")
         )
         self.game.map[self.squirrel_list[-1].position[0]][
             self.squirrel_list[-1].position[1]
