@@ -16,7 +16,7 @@ Artists: Jean-Alexei Hernandez, Jake Hitchcock, Sohum Honavar, Nneka Otuonye, St
 
 Sound Designers: Alireza Esna-Ashari, Sohum Honavar, Thomas Vu
 
-Voice Actors: Laura Baptie, Nicholar Greene, Sam Soard, Ella Ortega, Carome Taylor, Kilee Turner, Thomas Vu, Howard Wood
+Voice Actors: Laura Baptie, Nicholas Greene, Sam Soard, Ella Ortega, Carome Taylor, Kilee Turner, Thomas Vu, Howard Wood
 
 This is a redesign of our game created for Global Game Jam. The result at 48 hours can be found at tSigler2/ggjGame.
 
