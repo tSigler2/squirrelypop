@@ -21,3 +21,7 @@ Voice Actors: Laura Baptie, Nicholar Greene, Sam Soard, Ella Ortega, Carome Tayl
 This is a redesign of our game created for Global Game Jam. The result at 48 hours can be found at tSigler2/ggjGame.
 
 This link to the Game Jam copy for download can be found here: [Itch.io Page](https://jalexhdez.itch.io/squirrelypop)
+
+## Development
+
+To get started with development, you need pip, setuptools, wheel, and to type the command in this directory: ``pip install .``
