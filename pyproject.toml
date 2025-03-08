@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Squirrely-Pop"
+version  = "0.1.0"
+description = "A tower defense inspired game."
+authors = [{ name = "Thomas S" }]
+license = { text = "MIT" }
+readme = "README.md"
+dependencies = [
+    "numpy>=1.21.0",
+    "pygame>=2.6.1",
+    "requests>=2.26.0"
+]
+
+[project.optional-dependencies]
+dev = ["black"]
+
+[tool.setuptools]
+packages = ["squirrelypop"]
